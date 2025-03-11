@@ -1,0 +1,129 @@
+name: Release
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'LICENSE'
+      - '.github/workflows/**'
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    if: "!contains(github.event.head_commit.message, 'chore(release)')"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+      
+      - name: Install semantic-release
+        run: |
+          npm install -g semantic-release @semantic-release/git @semantic-release/changelog @semantic-release/exec
+      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+      
+      - name: Install cargo-edit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-edit
+
+      - name: Setup Git User
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+      
+      - name: Semantic Release
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+  build-release-binaries:
+    name: Build Release Binaries
+    needs: release
+    if: needs.release.result == 'success'
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            artifact_name: nhale-linux-amd64
+            asset_name: nhale-linux-amd64.tar.gz
+          - os: macos-latest
+            target: x86_64-apple-darwin
+            artifact_name: nhale-macos-amd64
+            asset_name: nhale-macos-amd64.tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            artifact_name: nhale-windows-amd64
+            asset_name: nhale-windows-amd64.zip
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+      
+      - name: Get Latest Release
+        id: get_release
+        uses: octokit/request-action@v2.x
+        with:
+          route: GET /repos/${{ github.repository }}/releases/latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Build Binary
+        run: cargo build --release --bin nhale-cli --target ${{ matrix.target }}
+      
+      - name: Prepare Artifacts (Unix)
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p release
+          cp target/${{ matrix.target }}/release/nhale-cli release/nhale
+          cp LICENSE release/
+          cp README.md release/
+          cd release
+          tar czf ../${{ matrix.asset_name }} *
+      
+      - name: Prepare Artifacts (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          mkdir release
+          copy target\${{ matrix.target }}\release\nhale-cli.exe release\nhale.exe
+          copy LICENSE release\
+          copy README.md release\
+          Compress-Archive -Path release\* -DestinationPath ${{ matrix.asset_name }}
+        shell: pwsh
+      
+      - name: Upload Release Asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ fromJson(steps.get_release.outputs.data).upload_url }}
+          asset_path: ./${{ matrix.asset_name }}
+          asset_name: ${{ matrix.asset_name }}
+          asset_content_type: application/octet-stream 

@@ -1,0 +1,60 @@
+[package]
+name = "nhale"
+version = "0.1.0"
+edition = "2021"
+authors = ["nHale Contributors"]
+description = "An advanced steganography toolkit for secure message embedding and extraction"
+license = "MIT"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Core functionality
+image = "0.24"  # Image processing
+hound = "3.5"   # Audio processing
+lopdf = "0.31"  # PDF processing
+jpeg-decoder = "0.3"  # JPEG decoding
+jpeg-encoder = "0.5"  # JPEG encoding
+
+# Cryptography
+aes = "0.8"
+chacha20 = "0.9"
+rsa = { version = "0.7", features = ["pem"] }
+hmac = "0.12"
+sha2 = "0.10"
+pbkdf2 = "0.8"
+getrandom = "0.2"
+base64ct = "1.6"
+rand = "0.8"
+
+# CLI
+clap = { version = "3.2", features = ["derive"] }
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Logging and error handling
+log = "0.4"
+env_logger = "0.10"
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Time handling
+chrono = "0.4"
+
+# Testing
+tempfile = "3.8"
+reed-solomon-erasure = "6.0.0"
+
+[lib]
+name = "nhale"
+path = "src/lib.rs"
+
+[[bin]]
+name = "nhale-cli"
+path = "src/bin/cli.rs"
+
+[[bin]]
+name = "create_test_pdf"
+path = "src/bin/create_test_pdf.rs"
