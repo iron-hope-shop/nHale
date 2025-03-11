@@ -1,50 +1,9 @@
-/*
-NEXT STEPS FOR NHALE DEVELOPMENT:
-1. Implement error correction for JPEG steganography:
-   - Add Reed-Solomon encoding for error correction
-   - Improve robustness against compression artifacts
-   - Implement redundant encoding for critical data
-   - Add options for balancing capacity vs. reliability
-
-2. Enhance JPEG steganography with DCT coefficient modification:
-   - Implement direct DCT coefficient manipulation
-   - Target mid-frequency coefficients for better compression survival
-   - Develop adaptive embedding based on image characteristics
-   - Add compression resistance testing tools
-
-3. Improve test fixtures and test data generation:
-   - Generate diverse carrier images with different characteristics
-   - Create varied test payloads (text, binary, structured data)
-   - Integrate with external image APIs for real-world testing
-   - Add automated test generation for different file formats
-
-4. Develop metadata manipulation utilities:
-   - Implement basic metadata reading/writing for images
-   - Add support for extracting and modifying PDF metadata
-   - Create utility functions for common metadata operations
-
-5. Complete CLI enhancements:
-   - Add file format-specific configuration options
-   - Improve help documentation with examples
-   - Create configuration file support for complex operations
-
-6. Performance optimization:
-   - Benchmark PNG and JPEG steganography operations
-   - Identify and address any bottlenecks in the PDF operations
-   - Implement parallel processing for large files
-
-7. Implement format detection and automatic selection:
-   - Add automatic detection of best steganography method based on file format
-   - Implement smart capacity estimation
-   - Create hybrid methods for optimal embedding
-*/
-
 ![readme-banner](./images/banner.gif)  
 
 # **nHale**
 
-[![CI](https://github.com/user/nhale/actions/workflows/ci.yml/badge.svg)](https://github.com/user/nhale/actions/workflows/ci.yml)
-[![GitHub Release](https://img.shields.io/github/v/release/user/nhale?include_prereleases&label=Release)](https://github.com/user/nhale/releases)
+[![CI](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml/badge.svg)](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/iron-hope-shop/nHale?include_prereleases&label=Release)](https://github.com/iron-hope-shop/nHale/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Modular, High-Performance Steganography Library
@@ -91,12 +50,12 @@ nHale is an open-source advanced steganography toolkit designed for secure messa
 ### **Installation**
 
 #### From Binaries
-Download the latest binary for your platform from the [Releases](https://github.com/user/nhale/releases) page.
+Download the latest binary for your platform from the [Releases](https://github.com/iron-hope-shop/nHale/releases) page.
 
 #### From Source
 ```bash
 # Clone the repository
-git clone https://github.com/user/nhale.git
+git clone https://github.com/iron-hope-shop/nHale.git
 cd nhale
 
 # Build the project
