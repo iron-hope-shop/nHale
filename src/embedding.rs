@@ -349,7 +349,7 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
                                         // Apply adjustment, ensuring we stay within 0-255 range
                                         let new_value =
                                             modified_pixels[pixel_pos] as i16 + adjustment;
-                                            modified_pixels[pixel_pos] = new_value.clamp(0, 255) as u8;
+                                        modified_pixels[pixel_pos] = new_value.clamp(0, 255) as u8;
                                     }
                                 }
                             }
@@ -561,9 +561,11 @@ mod tests {
                             for x in bx * 8..(bx + 1) * 8 {
                                 if y < height && x < width {
                                     let pixel_pos = (y * width + x) * channels + 2; // +2 for blue channel
-                                                                                    // Apply adjustment, ensuring we stay within 0-255 range
-                                    let new_value = pixels[pixel_pos] as i16 + adjustment;
-                                    pixels[pixel_pos] = new_value.clamp(0, 255) as u8;
+                                    if pixel_pos < pixels.len() {
+                                        // Apply adjustment, ensuring we stay within 0-255 range
+                                        let new_value = pixels[pixel_pos] as i16 + adjustment;
+                                        pixels[pixel_pos] = new_value.clamp(0, 255) as u8;
+                                    }
                                 }
                             }
                         }

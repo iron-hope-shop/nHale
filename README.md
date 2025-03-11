@@ -117,15 +117,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [x] Implement AES, ChaCha20, and RSA encryption modules.
 - [x] Develop integrity checking and HMAC verification.
 - [ ] Implement metadata manipulation utilities.
-- [✓] Implement PNG image processing with LSB steganography and variable bit depth.
+- [x] Implement PNG image processing with LSB steganography and variable bit depth.
 - [ ] Implement JPG, BMP, and GIF image processing.
 - [ ] Implement audio processing utilities (WAV, MP3).
 - [ ] Implement video processing utilities (MP4).
 - [x] Implement PDF embedding and extraction with integrity checking.
 
 ### **Phase 2: CLI Enhancement**
-- [✓] Develop basic CLI commands and argument parsing.
-- [✓] Add advanced configuration options for steganography techniques.
+- [x] Develop basic CLI commands and argument parsing.
+- [x] Add advanced configuration options for steganography techniques.
 - [ ] Implement batch processing capabilities.
 - [ ] Create user-friendly CLI help and documentation.
 - [ ] Write comprehensive Rust documentation for all CLI commands.
