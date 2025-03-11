@@ -1,11 +1,11 @@
 //! Metadata Module
-//! 
+//!
 //! This module provides functionality for handling metadata associated with
 //! steganographic data, including timestamps, authorship, and custom fields.
 
-use std::collections::HashMap;
-use serde::{Serialize, Deserialize};
 use crate::{Error, Result};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// Metadata associated with embedded data
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -38,13 +38,11 @@ impl Metadata {
 
     /// Serialize metadata to bytes
     pub fn to_bytes(&self) -> Result<Vec<u8>> {
-        serde_json::to_vec(self)
-            .map_err(|e| Error::Serialization(e.to_string()))
+        serde_json::to_vec(self).map_err(|e| Error::Serialization(e.to_string()))
     }
 
     /// Deserialize metadata from bytes
     pub fn from_bytes(data: &[u8]) -> Result<Self> {
-        serde_json::from_slice(data)
-            .map_err(|e| Error::Serialization(e.to_string()))
+        serde_json::from_slice(data).map_err(|e| Error::Serialization(e.to_string()))
     }
-} 
+}

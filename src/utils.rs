@@ -1,17 +1,17 @@
 //! Utility Module
-//! 
+//!
 //! This module provides utility functions for the application.
 
 use crate::{Error, Result};
-use std::path::Path;
 use std::fs;
+use std::path::Path;
 
 /// Checks if a file exists and has the correct extension
 pub fn validate_image_file(path: &Path) -> Result<()> {
     if !path.exists() {
         return Err(Error::Io(format!("File not found: {}", path.display())));
     }
-    
+
     match path.extension().and_then(|ext| ext.to_str()) {
         Some(ext) => match ext.to_lowercase().as_str() {
             "png" | "jpg" | "jpeg" | "bmp" | "gif" => Ok(()),
@@ -26,7 +26,7 @@ pub fn validate_audio_file(path: &Path) -> Result<()> {
     if !path.exists() {
         return Err(Error::Io(format!("File not found: {}", path.display())));
     }
-    
+
     match path.extension().and_then(|ext| ext.to_str()) {
         Some(ext) => match ext.to_lowercase().as_str() {
             "wav" | "mp3" => Ok(()),
@@ -53,14 +53,14 @@ pub fn validate_data(data: &[u8]) -> Result<()> {
     if data.is_empty() {
         return Err(Error::InvalidData("Data cannot be empty".to_string()));
     }
-    
+
     if data.len() > MAX_DATA_SIZE {
         return Err(Error::InvalidData(format!(
             "Data size exceeds maximum allowed size of {}MB",
             MAX_DATA_SIZE / (1024 * 1024)
         )));
     }
-    
+
     Ok(())
 }
 
@@ -77,25 +77,23 @@ pub fn format_size(size: u64) -> String {
     const UNITS: [&str; 4] = ["B", "KB", "MB", "GB"];
     let mut size = size as f64;
     let mut unit_index = 0;
-    
+
     while size >= 1024.0 && unit_index < UNITS.len() - 1 {
         size /= 1024.0;
         unit_index += 1;
     }
-    
+
     format!("{:.2} {}", size, UNITS[unit_index])
 }
 
 /// Reads a file into a byte vector
 pub fn read_file(path: impl AsRef<Path>) -> Result<Vec<u8>> {
-    fs::read(path.as_ref())
-        .map_err(|e| Error::Io(e.to_string()))
+    fs::read(path.as_ref()).map_err(|e| Error::Io(e.to_string()))
 }
 
 /// Writes bytes to a file
 pub fn write_file(path: impl AsRef<Path>, data: &[u8]) -> Result<()> {
-    fs::write(path.as_ref(), data)
-        .map_err(|e| Error::Io(e.to_string()))
+    fs::write(path.as_ref(), data).map_err(|e| Error::Io(e.to_string()))
 }
 
 /// Checks if a file exists
@@ -147,7 +145,7 @@ pub fn detect_file_format_from_bytes(bytes: &[u8]) -> FileFormat {
     if bytes.len() < 8 {
         return FileFormat::Unknown;
     }
-    
+
     // Check file signatures
     if bytes.starts_with(b"\x89PNG\r\n\x1a\n") {
         FileFormat::Png
@@ -161,8 +159,9 @@ pub fn detect_file_format_from_bytes(bytes: &[u8]) -> FileFormat {
         FileFormat::Wav
     } else if bytes.starts_with(&[0x49, 0x44, 0x33]) || bytes.starts_with(&[0xFF, 0xFB]) {
         FileFormat::Mp3
-    } else if bytes.starts_with(&[0x00, 0x00, 0x00]) && 
-             (bytes[4..].starts_with(b"ftyp") || bytes[4..].starts_with(b"moov")) {
+    } else if bytes.starts_with(&[0x00, 0x00, 0x00])
+        && (bytes[4..].starts_with(b"ftyp") || bytes[4..].starts_with(b"moov"))
+    {
         FileFormat::Mp4
     } else if bytes.starts_with(b"%PDF") {
         FileFormat::Pdf
@@ -174,39 +173,36 @@ pub fn detect_file_format_from_bytes(bytes: &[u8]) -> FileFormat {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::path::PathBuf;
     use std::fs;
+    use std::path::PathBuf;
     use tempfile::tempdir;
-    
+
     #[test]
     fn test_validate_image_file() {
         // Test with non-existent files with valid extensions
         let valid_extensions = ["png", "jpg", "jpeg", "bmp", "gif"];
         for ext in valid_extensions.iter() {
             let path = PathBuf::from(format!("test.{}", ext));
-            assert!(matches!(
-                validate_image_file(&path),
-                Err(Error::Io(_))
-            ));
+            assert!(matches!(validate_image_file(&path), Err(Error::Io(_))));
         }
-        
+
         // Create a temporary file with an invalid extension
         let dir = tempdir().unwrap();
         let path = dir.path().join("test.txt");
         fs::write(&path, b"test").unwrap();
-        
+
         assert!(matches!(
             validate_image_file(&path),
             Err(Error::InvalidInput(_))
         ));
     }
-    
+
     #[test]
     fn test_calculate_image_capacity() {
         assert_eq!(calculate_image_capacity(100, 100), 3746);
         assert_eq!(calculate_image_capacity(1920, 1080), 777_596);
     }
-    
+
     #[test]
     fn test_format_size() {
         assert_eq!(format_size(0), "0.00 B");
@@ -214,22 +210,22 @@ mod tests {
         assert_eq!(format_size(1024 * 1024), "1.00 MB");
         assert_eq!(format_size(1024 * 1024 * 1024), "1.00 GB");
     }
-    
+
     #[test]
     fn test_validate_data() {
         let data = vec![1, 2, 3, 4, 5];
         assert!(validate_data(&data).is_ok());
-        
+
         let empty_data: Vec<u8> = vec![];
         assert!(validate_data(&empty_data).is_err());
-        
+
         let large_data = vec![0; MAX_DATA_SIZE + 1];
         assert!(validate_data(&large_data).is_err());
     }
-    
+
     #[test]
     fn test_check_file_exists() {
         assert!(check_file_exists("Cargo.toml").is_ok());
         assert!(check_file_exists("nonexistent_file.txt").is_err());
     }
-} 
+}

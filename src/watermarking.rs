@@ -1,5 +1,5 @@
 //! Watermarking Module
-//! 
+//!
 //! This module provides functionality for embedding and detecting
 //! digital watermarks in various media formats.
 
@@ -25,7 +25,9 @@ pub fn embed_visible_watermark(
     _opacity: f32,
 ) -> Result<DynamicImage> {
     // TODO: Implement visible watermarking by overlaying the watermark_image on the base image
-    Err(Error::NotImplemented("Visible watermarking not yet implemented".into()))
+    Err(Error::NotImplemented(
+        "Visible watermarking not yet implemented".into(),
+    ))
 }
 
 /// Embeds an invisible watermark in an image using DCT coefficients
@@ -34,7 +36,9 @@ pub fn embed_invisible_watermark(
     _config: &WatermarkConfig,
 ) -> Result<DynamicImage> {
     // TODO: Implement invisible watermarking using DCT coefficient modification
-    Err(Error::NotImplemented("Invisible watermarking not yet implemented".into()))
+    Err(Error::NotImplemented(
+        "Invisible watermarking not yet implemented".into(),
+    ))
 }
 
 /// Detects an invisible watermark in an image
@@ -43,24 +47,25 @@ pub fn detect_watermark(
     _expected_identifier: &str,
 ) -> Result<Option<Vec<u8>>> {
     // TODO: Implement watermark detection
-    Err(Error::NotImplemented("Watermark detection not yet implemented".into()))
+    Err(Error::NotImplemented(
+        "Watermark detection not yet implemented".into(),
+    ))
 }
 
 /// Verifies if an image contains a specific watermark
-pub fn verify_watermark(
-    _image: &DynamicImage,
-    _config: &WatermarkConfig,
-) -> Result<bool> {
+pub fn verify_watermark(_image: &DynamicImage, _config: &WatermarkConfig) -> Result<bool> {
     // TODO: Implement watermark verification
-    Err(Error::NotImplemented("Watermark verification not yet implemented".into()))
+    Err(Error::NotImplemented(
+        "Watermark verification not yet implemented".into(),
+    ))
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_watermark_flow() {
         // TODO: Add tests for watermarking once implemented
     }
-} 
+}

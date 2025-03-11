@@ -1,25 +1,25 @@
 //! nHale - Advanced Steganography Toolkit
-//! 
+//!
 //! This library provides a comprehensive set of tools for steganographic operations,
 //! including data embedding, extraction, and analysis across various file formats.
 
 pub mod embedding;
-pub mod extraction;
 pub mod encryption;
+pub mod error_correction;
+pub mod extraction;
 pub mod integrity;
 pub mod metadata;
 pub mod pdf;
 pub mod utils;
 pub mod watermarking;
-pub mod error_correction;
 
 // Re-export commonly used items
 pub use embedding::*;
-pub use extraction::*;
 pub use encryption::*;
+pub use error_correction::*;
+pub use extraction::*;
 pub use integrity::*;
 pub use watermarking::*;
-pub use error_correction::*;
 
 use std::fmt;
 
@@ -68,4 +68,4 @@ impl std::error::Error for Error {}
 pub type Result<T> = std::result::Result<T, Error>;
 
 // Version information
-pub const VERSION: &str = env!("CARGO_PKG_VERSION"); 
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
