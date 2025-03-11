@@ -161,7 +161,10 @@ fn main() -> Result<()> {
             config,
         } => {
             if !(1..=4).contains(&bit_depth) {
-                eprintln!("Error: Bit depth must be between 1 and 4, got {}", bit_depth);
+                eprintln!(
+                    "Error: Bit depth must be between 1 and 4, got {}",
+                    bit_depth
+                );
                 return Ok(());
             }
 
@@ -253,7 +256,10 @@ fn main() -> Result<()> {
             config,
         } => {
             if !(1..=4).contains(&bit_depth) {
-                eprintln!("Error: Bit depth must be between 1 and 4, got {}", bit_depth);
+                eprintln!(
+                    "Error: Bit depth must be between 1 and 4, got {}",
+                    bit_depth
+                );
                 return Ok(());
             }
 
@@ -342,7 +348,10 @@ fn main() -> Result<()> {
             ))
         }
 
-        Commands::Detect { input: _, sensitivity: _ } => {
+        Commands::Detect {
+            input: _,
+            sensitivity: _,
+        } => {
             println!("Steganography detection feature is not implemented yet");
             Err(Error::NotImplemented(
                 "Steganography detection not yet implemented".into(),

@@ -126,7 +126,7 @@ pub fn decode(encoded_data: &[u8]) -> crate::Result<Vec<u8>> {
     }
 
     // Calculate the total encoded length including parity bytes
-    let encoded_length = 
+    let encoded_length =
         // Header (version 1 byte, parity size 1 byte, original data length 4 bytes)
         6
         // Original data with parity bytes
