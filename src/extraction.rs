@@ -23,6 +23,8 @@ pub struct ExtractConfig {
     pub encryption: Option<CryptoConfig>,
     /// Additional extraction parameters
     pub parameters: Option<std::collections::HashMap<String, String>>,
+    /// Reed-Solomon error correction configuration (used when applicable)
+    pub reed_solomon_config: Option<crate::error_correction::ReedSolomonConfig>,
 }
 
 /// Extracts embedded data from a PDF file
@@ -414,6 +416,7 @@ mod tests {
             input_path: output_path.to_str().unwrap().to_string(),
             encryption: None,
             parameters: None,
+            reed_solomon_config: None,
         };
 
         let data = extract_data(config)?;

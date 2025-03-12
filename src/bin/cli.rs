@@ -300,6 +300,7 @@ fn main() -> Result<()> {
                     password: pass,
                 }),
                 parameters: Some(parameters),
+                reed_solomon_config: None,
             };
 
             let final_data = match file_format {

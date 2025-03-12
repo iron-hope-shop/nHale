@@ -712,6 +712,7 @@ mod tests {
             input_path: output_jpg_path.to_string_lossy().to_string(),
             encryption: None,
             parameters: None,
+            reed_solomon_config: None,
         };
 
         // Use the extraction function directly
