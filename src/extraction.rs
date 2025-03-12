@@ -294,16 +294,23 @@ pub fn extract_from_jpg(config: ExtractConfig) -> Result<Vec<u8>> {
     );
 
     // Apply error correction decoding to recover the original data
-    let actual_data = match crate::error_correction::decode(&error_corrected_data) {
+    let actual_data = match crate::error_correction::decode_reed_solomon(&error_corrected_data) {
         Ok(data) => data,
         Err(e) => {
-            println!("DEBUG: Error correction failed: {}", e);
-            // If error correction fails, return the raw data as a fallback
-            error_corrected_data
+            println!("DEBUG: Reed-Solomon error correction failed: {}", e);
+            // If Reed-Solomon correction fails, try the legacy parity-based correction as fallback
+            match crate::error_correction::decode(&error_corrected_data) {
+                Ok(data) => data,
+                Err(e2) => {
+                    println!("DEBUG: Legacy error correction also failed: {}", e2);
+                    // If both error correction methods fail, return the raw data as a last resort
+                    error_corrected_data
+                }
+            }
         }
     };
 
-    println!("DEBUG: After error correction: {} bytes", actual_data.len());
+    println!("DEBUG: After Reed-Solomon error correction: {} bytes", actual_data.len());
 
     // Decrypt if necessary
     if let Some(crypto_config) = &config.encryption {

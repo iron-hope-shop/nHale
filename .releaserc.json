@@ -28,7 +28,7 @@
         "assets": [
           {
             "path": "target/release/nhale-cli",
-            "name": "nhale-cli-linux-x64",
+            "name": "nhale-cli-${nextRelease.version}-linux-x64",
             "label": "Linux x64 Binary"
           }
         ]

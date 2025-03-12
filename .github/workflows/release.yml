@@ -62,16 +62,16 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            artifact_name: nhale-linux-amd64
-            asset_name: nhale-linux-amd64.tar.gz
+            artifact_name: nhale-cli
+            asset_name: nhale-cli-linux-amd64.tar.gz
           - os: macos-latest
             target: x86_64-apple-darwin
-            artifact_name: nhale-macos-amd64
-            asset_name: nhale-macos-amd64.tar.gz
+            artifact_name: nhale-cli
+            asset_name: nhale-cli-macos-amd64.tar.gz
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            artifact_name: nhale-windows-amd64
-            asset_name: nhale-windows-amd64.zip
+            artifact_name: nhale-cli.exe
+            asset_name: nhale-cli-windows-amd64.zip
     
     steps:
       - name: Checkout
@@ -102,7 +102,7 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           mkdir -p release
-          cp target/${{ matrix.target }}/release/nhale-cli release/nhale
+          cp target/${{ matrix.target }}/release/${{ matrix.artifact_name }} release/nhale
           cp LICENSE release/
           cp README.md release/
           cd release
@@ -112,7 +112,7 @@ jobs:
         if: runner.os == 'Windows'
         run: |
           mkdir release
-          copy target\${{ matrix.target }}\release\nhale-cli.exe release\nhale.exe
+          copy target\${{ matrix.target }}\release\${{ matrix.artifact_name }} release\nhale.exe
           copy LICENSE release\
           copy README.md release\
           Compress-Archive -Path release\* -DestinationPath ${{ matrix.asset_name }}
