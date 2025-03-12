@@ -22,18 +22,7 @@
         "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
       }
     ],
-    [
-      "@semantic-release/github",
-      {
-        "assets": [
-          {
-            "path": "target/release/nhale-cli",
-            "name": "nhale-cli-${nextRelease.version}-linux-x64",
-            "label": "Linux x64 Binary"
-          }
-        ]
-      }
-    ]
+    "@semantic-release/github"
   ],
   "preset": "angular"
 } 

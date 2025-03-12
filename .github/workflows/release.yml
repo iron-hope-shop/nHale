@@ -13,7 +13,11 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
-    if: "!contains(github.event.head_commit.message, 'chore(release)')"
+    if: ${{ !contains(github.event.head_commit.message, 'chore(release)') }}
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
+      new_release_upload_url: ${{ steps.semantic.outputs.new_release_upload_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -25,8 +29,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
+          cache: 'npm'
       
-      - name: Install semantic-release
+      - name: Install semantic-release and plugins
         run: |
           npm install -g semantic-release @semantic-release/git @semantic-release/changelog @semantic-release/exec
       
@@ -36,6 +41,9 @@ jobs:
           profile: minimal
           toolchain: stable
           override: true
+      
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
       
       - name: Install cargo-edit
         uses: taiki-e/install-action@v2
@@ -48,6 +56,7 @@ jobs:
           git config --global user.email "github-actions@github.com"
       
       - name: Semantic Release
+        id: semantic
         run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -55,7 +64,7 @@ jobs:
   build-release-binaries:
     name: Build Release Binaries
     needs: release
-    if: needs.release.result == 'success'
+    if: needs.release.outputs.new_release_published == 'true'
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -87,13 +96,8 @@ jobs:
           target: ${{ matrix.target }}
           override: true
       
-      - name: Get Latest Release
-        id: get_release
-        uses: octokit/request-action@v2.x
-        with:
-          route: GET /repos/${{ github.repository }}/releases/latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Rust Cache
+        uses: Swatinem/rust-cache@v2
       
       - name: Build Binary
         run: cargo build --release --bin nhale-cli --target ${{ matrix.target }}
@@ -119,11 +123,9 @@ jobs:
         shell: pwsh
       
       - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: softprops/action-gh-release@v1
         with:
-          upload_url: ${{ fromJson(steps.get_release.outputs.data).upload_url }}
-          asset_path: ./${{ matrix.asset_name }}
-          asset_name: ${{ matrix.asset_name }}
-          asset_content_type: application/octet-stream 
+          files: ${{ matrix.asset_name }}
+          tag_name: v${{ needs.release.outputs.new_release_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 

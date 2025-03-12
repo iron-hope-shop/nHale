@@ -16,6 +16,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
 
 jobs:
   build:
@@ -39,6 +40,8 @@ jobs:
     
     - name: Rust Cache
       uses: Swatinem/rust-cache@v2
+      with:
+        cache-on-failure: true
     
     - name: Check code format
       run: cargo fmt -- --check
@@ -68,6 +71,8 @@ jobs:
       
       - name: Rust Cache
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
         
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
