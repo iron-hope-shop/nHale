@@ -217,9 +217,9 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
     // Process data (including encryption if specified)
     let data = process_data(&config.data, &config.encryption)?;
 
-    // Apply error correction to the data for improved robustness
-    let error_correction_config = error_correction::ErrorCorrectionConfig::default();
-    let protected_data = error_correction::encode(&data, &error_correction_config)?;
+    // Apply Reed-Solomon error correction to the data for improved robustness
+    let reed_solomon_config = error_correction::ReedSolomonConfig::default();
+    let protected_data = error_correction::encode_reed_solomon(&data, &reed_solomon_config)?;
 
     // Open the input JPEG file
     let file = File::open(&config.input_path)
@@ -285,7 +285,7 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
     // Check if the data fits
     if protected_data.len() + 4 > capacity_bytes {
         return Err(Error::InvalidInput(
-            format!("Data is too large to be embedded with error correction. Maximum capacity: {} bytes, needed: {} bytes", 
+            format!("Data is too large to be embedded with Reed-Solomon error correction. Maximum capacity: {} bytes, needed: {} bytes", 
                    capacity_bytes, protected_data.len() + 4)
         ));
     }
@@ -298,7 +298,7 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
     // Convert data to bits
     let bits = bytes_to_bits(&data_to_embed);
     println!(
-        "Debug: Embedding {} bits ({} bytes with error correction)",
+        "Debug: Embedding {} bits ({} bytes with Reed-Solomon error correction)",
         bits.len(),
         protected_data.len()
     );
@@ -738,6 +738,130 @@ mod tests {
                 println!("Failed to extract data: {:?}", e);
                 println!("This is expected with JPEG compression and not a test failure.");
             }
+        }
+    }
+
+    #[test]
+    fn test_jpg_reed_solomon_error_correction() {
+        use crate::extraction::extract_from_jpg;
+        use std::fs::File;
+        use std::io::BufWriter;
+        use std::path::PathBuf;
+        use tempfile::TempDir;
+
+        // Setup temporary directory for test files
+        let temp_dir = TempDir::new().expect("Failed to create temp dir");
+        
+        // Create a test image file
+        let input_jpg_path = temp_dir.path().join("test_input_rs.jpg");
+        let output_jpg_path = temp_dir.path().join("test_output_rs.jpg");
+        let corrupted_jpg_path = temp_dir.path().join("test_corrupted_rs.jpg");
+        
+        // Create a sample image (8x8 pixels per block for JPEG)
+        let width = 256;
+        let height = 256;
+        let mut pixels = vec![0; width * height * 3]; // RGB image
+        
+        // Fill with solid color blocks that are good for JPEG compression
+        for y in 0..height {
+            for x in 0..width {
+                let block_x = x / 8;
+                let block_y = y / 8;
+                
+                // Use solid colors for 8x8 blocks to better survive JPEG compression
+                let r = ((block_x * 16) % 256) as u8;
+                let g = ((block_y * 16) % 256) as u8;
+                let b = (((block_x + block_y) * 16) % 256) as u8;
+                
+                let pixel_pos = (y * width + x) * 3;
+                pixels[pixel_pos] = r;
+                pixels[pixel_pos + 1] = g;
+                pixels[pixel_pos + 2] = b;
+            }
+        }
+        
+        // Save as JPG with maximum quality
+        let jpg_file = File::create(&input_jpg_path).unwrap();
+        let jpg_encoder = jpeg_encoder::Encoder::new(BufWriter::new(jpg_file), 100); // Maximum quality
+        jpg_encoder
+            .encode(
+                &pixels,
+                width as u16,
+                height as u16,
+                jpeg_encoder::ColorType::Rgb,
+            )
+            .expect("Failed to encode JPEG");
+        
+        println!("Created JPG image for Reed-Solomon test at: {:?}", input_jpg_path);
+        
+        // Create test data to embed - make it long enough to span multiple Reed-Solomon shards
+        let test_data = b"This is a test of the Reed-Solomon error correction for JPEG steganography. \
+                         It should be able to withstand corruption and still recover the original message. \
+                         We're making this message long enough to ensure it spans multiple shards in the \
+                         Reed-Solomon encoding process, allowing us to test the error recovery capabilities.";
+        
+        // Create embed config
+        let embed_config = EmbedConfig {
+            input_path: input_jpg_path.to_string_lossy().to_string(),
+            output_path: output_jpg_path.to_string_lossy().to_string(),
+            data: test_data.to_vec(),
+            encryption: None,
+        };
+        
+        // Embed the data
+        let embed_result = embed_in_jpg(embed_config);
+        assert!(embed_result.is_ok(), "Failed to embed data: {:?}", embed_result);
+        assert!(output_jpg_path.exists(), "Output file was not created");
+        println!("Successfully embedded data into: {:?}", output_jpg_path);
+        
+        // Create a corrupted copy of the output file
+        std::fs::copy(&output_jpg_path, &corrupted_jpg_path).expect("Failed to copy output file");
+        
+        // Corrupt parts of the file - avoid the header (first 100 bytes) to ensure we don't corrupt file structure
+        let mut corrupted_file = std::fs::read(&corrupted_jpg_path).expect("Failed to read output file");
+        let corruption_blocks = 10;
+        let block_size = 16;
+        let file_size = corrupted_file.len();
+        
+        let mut rng = rand::thread_rng();
+        for i in 0..corruption_blocks {
+            // Corrupt random blocks of data, skipping the file header
+            let start_idx = 100 + (i * file_size / corruption_blocks / 4);
+            if start_idx + block_size < file_size {
+                for j in 0..block_size {
+                    corrupted_file[start_idx + j] = 0xFF; // Complete corruption of these bytes
+                }
+            }
+        }
+        
+        // Write the corrupted file back
+        std::fs::write(&corrupted_jpg_path, corrupted_file).expect("Failed to write corrupted file");
+        println!("Created corrupted file with {} corruption blocks at: {:?}", corruption_blocks, corrupted_jpg_path);
+        
+        // Try to extract from the corrupted file
+        let extract_config = crate::extraction::ExtractConfig {
+            input_path: corrupted_jpg_path.to_string_lossy().to_string(),
+            encryption: None,
+            parameters: None,
+        };
+        
+        let extract_result = extract_from_jpg(extract_config);
+        
+        // With Reed-Solomon error correction, we should still be able to recover the data
+        if let Ok(extracted_data) = extract_result {
+            println!(
+                "Successfully extracted {} bytes from corrupted file",
+                extracted_data.len()
+            );
+            
+            // Check if the extracted data matches the original
+            assert_eq!(
+                extracted_data, test_data,
+                "Extracted data doesn't match original after Reed-Solomon correction"
+            );
+            println!("Reed-Solomon error correction successfully recovered the original data!");
+        } else {
+            panic!("Failed to extract data: {:?}", extract_result);
         }
     }
 }
