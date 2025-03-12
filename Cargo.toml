@@ -5,6 +5,11 @@ edition = "2021"
 authors = ["nHale Contributors"]
 description = "An advanced steganography toolkit for secure message embedding and extraction"
 license = "MIT"
+repository = "https://github.com/iron-hope-shop/nHale"
+homepage = "https://github.com/iron-hope-shop/nHale"
+readme = "README.md"
+keywords = ["steganography", "security", "cryptography", "privacy", "forensics"]
+categories = ["cryptography", "command-line-utilities"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
