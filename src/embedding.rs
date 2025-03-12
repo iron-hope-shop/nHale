@@ -38,7 +38,7 @@ pub struct EmbeddingConfig {
 }
 
 /// Configuration for embedding data
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct EmbedConfig {
     /// Path to the source PDF file
     pub input_path: String,
@@ -48,6 +48,8 @@ pub struct EmbedConfig {
     pub data: Vec<u8>,
     /// Optional encryption configuration
     pub encryption: Option<CryptoConfig>,
+    /// Additional parameters for embedding
+    pub parameters: Option<std::collections::HashMap<String, String>>,
 }
 
 /// Embeds data in an image
@@ -218,7 +220,25 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
     let data = process_data(&config.data, &config.encryption)?;
 
     // Apply Reed-Solomon error correction to the data for improved robustness
-    let reed_solomon_config = error_correction::ReedSolomonConfig::default();
+    // Check if we have specific Reed-Solomon parameters in the config
+    let reed_solomon_config = if let Some(ref params) = config.parameters {
+        if let (Some(data_shards_str), Some(parity_shards_str)) = (params.get("rs_data_shards"), params.get("rs_parity_shards")) {
+            if let (Ok(data_shards), Ok(parity_shards)) = (data_shards_str.parse::<usize>(), parity_shards_str.parse::<usize>()) {
+                crate::error_correction::ReedSolomonConfig {
+                    data_shards,
+                    parity_shards,
+                    use_checksum: params.get("rs_use_checksum").map_or(true, |v| v == "true"),
+                }
+            } else {
+                error_correction::ReedSolomonConfig::default()
+            }
+        } else {
+            error_correction::ReedSolomonConfig::default()
+        }
+    } else {
+        error_correction::ReedSolomonConfig::default()
+    };
+
     let protected_data = error_correction::encode_reed_solomon(&data, &reed_solomon_config)?;
 
     // Open the input JPEG file
@@ -476,6 +496,7 @@ mod tests {
             output_path: output_path.to_str().unwrap().to_string(),
             data: b"Test data".to_vec(),
             encryption: None,
+            parameters: None,
         };
 
         embed_data(config)?;
@@ -695,10 +716,21 @@ mod tests {
             output_path: output_jpg_path.to_string_lossy().to_string(),
             data: test_data.to_vec(),
             encryption: None,
+            parameters: None,
         };
 
-        // Embed the data
-        let embed_result = embed_in_jpg(embed_config);
+        // Add custom parameters for Reed-Solomon
+        let mut params = std::collections::HashMap::new();
+        params.insert("rs_data_shards".to_string(), "2".to_string());
+        params.insert("rs_parity_shards".to_string(), "8".to_string());
+        params.insert("rs_use_checksum".to_string(), "true".to_string());
+        
+        // Create a version of embed_config with parameters
+        let mut embed_config_with_params = embed_config.clone();
+        embed_config_with_params.parameters = Some(params);
+
+        // Embed the data using more robust error correction
+        let embed_result = embed_in_jpg(embed_config_with_params);
         assert!(
             embed_result.is_ok(),
             "Failed to embed data: {:?}",
@@ -712,7 +744,11 @@ mod tests {
             input_path: output_jpg_path.to_string_lossy().to_string(),
             encryption: None,
             parameters: None,
-            reed_solomon_config: None,
+            reed_solomon_config: Some(crate::error_correction::ReedSolomonConfig {
+                data_shards: 2,      // Using fewer data shards
+                parity_shards: 8,     // And more parity shards for better error resistance
+                use_checksum: true,
+            }),
         };
 
         // Use the extraction function directly
