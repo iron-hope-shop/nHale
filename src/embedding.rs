@@ -217,9 +217,9 @@ pub fn embed_in_jpg(config: EmbedConfig) -> Result<()> {
     // Process data (including encryption if specified)
     let data = process_data(&config.data, &config.encryption)?;
 
-    // Apply error correction to the data for improved robustness
-    let error_correction_config = error_correction::ErrorCorrectionConfig::default();
-    let protected_data = error_correction::encode(&data, &error_correction_config)?;
+    // Apply Reed-Solomon error correction to the data for improved robustness
+    let reed_solomon_config = error_correction::ReedSolomonConfig::default();
+    let protected_data = error_correction::encode_reed_solomon(&data, &reed_solomon_config)?;
 
     // Open the input JPEG file
     let file = File::open(&config.input_path)
