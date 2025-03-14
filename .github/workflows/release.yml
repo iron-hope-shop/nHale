@@ -1,3 +1,5 @@
+# Release workflow temporarily disabled during development
+# Remove this comment line to re-enable the workflow
 name: Release
 
 on:

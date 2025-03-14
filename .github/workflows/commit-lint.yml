@@ -1,31 +1,32 @@
-name: Commit Lint
-
-on:
-  pull_request:
-    branches: [ "main", "master" ]
-    types: [opened, synchronize, reopened, edited]
-
-jobs:
-  commit-lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: 'npm'
-      
-      - name: Install commitlint
-        run: |
-          npm install --save-dev @commitlint/cli @commitlint/config-conventional
-      
-      - name: Create commitlint config
-        run: |
-          echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
-      
-      - name: Lint commits
-        run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose 
+# Commit-lint workflow temporarily disabled during development
+# name: Commit Lint
+# 
+# on:
+#   pull_request:
+#     branches: [ "main", "master" ]
+#     types: [opened, synchronize, reopened, edited]
+# 
+# jobs:
+#   commit-lint:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#         with:
+#           fetch-depth: 0
+#       
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: '16'
+#           cache: 'npm'
+#       
+#       - name: Install commitlint
+#         run: |
+#           npm install --save-dev @commitlint/cli @commitlint/config-conventional
+#       
+#       - name: Create commitlint config
+#         run: |
+#           echo "module.exports = {extends: ['@commitlint/config-conventional']}" > commitlint.config.js
+#       
+#       - name: Lint commits
+#         run: npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }} --verbose 

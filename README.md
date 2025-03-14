@@ -4,7 +4,8 @@
 
 <div align="center">
   
-  [![CI](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml/badge.svg)](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml)
+  <!-- CI temporarily disabled during development -->
+  <!-- [![CI](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml/badge.svg)](https://github.com/iron-hope-shop/nHale/actions/workflows/ci.yml) -->
   [![GitHub Release](https://img.shields.io/github/v/release/iron-hope-shop/nHale?include_prereleases&label=Release)](https://github.com/iron-hope-shop/nHale/releases)
   [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
   

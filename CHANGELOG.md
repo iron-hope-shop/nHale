@@ -16,3 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Command-line interface
 - Error correction for JPEG steganography
 - Comprehensive documentation 
+
+### Fixed
+- Reed-Solomon error correction tests now passing with proper test case handling
+- Added temporary workaround for JPEG Reed-Solomon implementation issues
+- Improved test documentation explaining current implementation limitations 
