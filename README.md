@@ -14,36 +14,45 @@
 ---
 
 <div align="center">
-  
-## 📑 Table of Contents
-
-[1. Introduction](#1-introduction)  
-├── [1.1 Overview](#11-overview)  
-└── [1.2 Objectives](#12-objectives)  
-
-[2. System Architecture](#2-system-architecture)  
-├── [2.1 High-Level Design](#21-high-level-design)  
-├── [2.2 Supported File Formats](#22-supported-file-formats)  
-└── [2.3 Core Modules](#23-core-modules)  
-
-[3. Quick Start](#3-quick-start)  
-├── [Installation](#installation)  
-└── [Basic Usage](#basic-usage)  
-
-[4. Development](#4-development)  
-├── [Prerequisites](#prerequisites)  
-├── [Testing](#testing)  
-└── [Contributing](#contributing)  
-
-[5. License](#5-license)  
-
-[6. Project Status](#6-project-status)  
-├── [Implemented Features](#implemented-features)  
-└── [In Progress / Planned Features](#in-progress--planned-features)  
-
-[7. Current Code Structure](#7-current-code-structure)  
-
+  <h2>📖 Contents</h2>
 </div>
+
+<details open="open">
+<summary><strong>Getting Started</strong></summary>
+
+- [Introduction](#1-introduction)
+  - [Overview](#11-overview)
+  - [Objectives](#12-objectives)
+- [Quick Start](#3-quick-start)
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+
+</details>
+
+<details open="open">
+<summary><strong>Core Documentation</strong></summary>
+
+- [System Architecture](#2-system-architecture)
+  - [High-Level Design](#21-high-level-design)
+  - [Supported File Formats](#22-supported-file-formats)
+  - [Core Modules](#23-core-modules)
+- [Development](#4-development)
+  - [Prerequisites](#prerequisites)
+  - [Testing](#testing)
+  - [Contributing](#contributing)
+
+</details>
+
+<details open="open">
+<summary><strong>Project Information</strong></summary>
+
+- [Project Status](#6-project-status)
+  - [Implemented Features](#implemented-features)
+  - [Planned Features](#in-progress--planned-features)
+- [Code Structure](#7-current-code-structure)
+- [License](#5-license)
+
+</details>
 
 ---
 
