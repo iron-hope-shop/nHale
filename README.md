@@ -183,5 +183,4 @@ nHale/
 ```
 
 ### **See Also**
-- [ISSUES.md](ISSUES.md) for current issues, bugs, and detailed development priorities.
 - [CHANGELOG.md](CHANGELOG.md) for version history.
