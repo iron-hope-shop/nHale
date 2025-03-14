@@ -155,31 +155,32 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## **7. Current Code Structure**
 ```plaintext
 nHale/
-│── src/
-│   │── lib.rs              # Core library functionality
-│   │── embedding.rs        # Embedding module for PNG, JPG, PDF
-│   │── extraction.rs       # Extraction module for PNG, JPG, PDF
-│   │── encryption.rs       # Encryption (AES, ChaCha20, RSA)
-│   │── error_correction.rs # Error correction for lossy formats
-│   │── integrity.rs        # Integrity checking with HMAC
-│   │── metadata.rs         # Basic metadata handling (WIP)
-│   │── pdf.rs              # PDF steganography
-│   │── utils.rs            # Helper functions and utilities
-│   │── watermarking.rs     # Watermarking module (skeleton)
-│   │── bin/
-│   │   │── cli.rs          # CLI implementation
-│   │   │── create_test_pdf.rs # Utility for creating test PDFs
-│
-│── tests/
-│   │── fixtures/           # Test fixtures
-│
-│── docs/                   # Documentation
-│
-│── .github/                # GitHub configuration
-│
-│── Cargo.toml              # Rust dependencies
-│── README.md               # Project overview
-│── LICENSE                 # MIT license
+├── Cargo.toml             # Project dependencies and configuration
+├── Cargo.lock             # Locked dependencies
+├── LICENSE                # MIT license
+├── CHANGELOG.md           # Version history
+├── CONTRIBUTING.md        # Contribution guidelines
+├── README.md             # Project documentation
+├── images/
+│   └── banner.gif        # Project banner image
+├── docs/
+│   ├── jpeg_steganography.md    # JPEG steganography documentation
+│   ├── error_correction.md      # Error correction documentation
+│   └── steganography.md         # General steganography documentation
+└── src/
+    ├── lib.rs            # Core library functionality
+    ├── embedding.rs      # Embedding module for PNG, JPG, PDF
+    ├── extraction.rs     # Extraction module for PNG, JPG, PDF
+    ├── encryption.rs     # Encryption (AES, ChaCha20, RSA)
+    ├── error_correction.rs # Error correction for lossy formats
+    ├── integrity.rs      # Integrity checking with HMAC
+    ├── metadata.rs       # Basic metadata handling
+    ├── pdf.rs           # PDF steganography
+    ├── utils.rs         # Helper functions and utilities
+    ├── watermarking.rs  # Watermarking module
+    └── bin/
+        ├── cli.rs       # CLI implementation
+        └── create_test_pdf.rs # Utility for creating test PDFs
 ```
 
 ### **See Also**
