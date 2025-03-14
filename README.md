@@ -32,18 +32,28 @@ nHale is an open-source advanced steganography toolkit designed for secure messa
 - **CLI Interface:** Rust-based command-line interface with comprehensive options.
 
 ### **2.2 Supported File Formats**
-- **Images:** BMP, PNG, JPG, GIF.
-- **Audio:** WAV, MP3.
-- **Video:** MP4.
-- **Documents:** PDF.
+
+#### Currently Implemented
+- **Images:** PNG (fully implemented), JPG (partially implemented)
+- **Documents:** PDF (fully implemented)
+
+#### Planned for Future Implementation
+- **Images:** BMP, GIF
+- **Audio:** WAV, MP3
+- **Video:** MP4
 
 ### **2.3 Core Modules**
-- **Embedding Module:** Hides encrypted data inside media files.
-- **Extraction Module:** Recovers hidden messages from media.
-- **Integrity Checker Module:** Ensures hidden data has not been modified.
+
+#### Currently Implemented
+- **Embedding Module:** Hides encrypted data inside PNG, JPG, and PDF files.
+- **Extraction Module:** Recovers hidden messages from PNG, JPG, and PDF files.
+- **Integrity Checker Module:** Ensures hidden data has not been modified (implemented for PDF).
+- **Encryption Module:** AES-256, ChaCha20, and RSA encryption support.
+- **Error Correction Module:** Reed-Solomon error correction for JPG steganography.
+
+#### Planned for Future Implementation
 - **Watermarking Module:** Embeds and verifies digital watermarks.
-- **Metadata Module:** Reads, modifies, and analyzes metadata.
-- **Encryption Module:** AES, ChaCha20, and RSA encryption support.
+- **Enhanced Metadata Module:** Advanced metadata manipulation for various file formats.
 - **PDF Analysis Module:** Detects hidden scripts and anomalies.
 
 ---
@@ -51,9 +61,6 @@ nHale is an open-source advanced steganography toolkit designed for secure messa
 ## **3. Quick Start**
 
 ### **Installation**
-
-#### From Binaries
-Download the latest binary for your platform from the [Releases](https://github.com/iron-hope-shop/nHale/releases) page.
 
 #### From Source
 ```bash
@@ -70,23 +77,30 @@ cargo build --release
 
 ### **Basic Usage**
 
-#### Embedding data in an image
+#### Embedding data in a PNG image
 ```bash
-nhale embed -i input.png -o output.png -d "Secret message"
+nhale-cli embed -i input.png -o output.png -d "Secret message"
 ```
 
-#### Extracting data from an image
+#### Extracting data from a PNG image
 ```bash
-nhale extract -i output.png
+nhale-cli extract -i output.png
 ```
 
 #### Using encryption
 ```bash
-nhale embed -i input.png -o output.png -d "Secret message" --encrypt --password "your-secure-password"
+nhale-cli embed -i input.png -o output.png -d "Secret message" -p "your-secure-password" -a aes256
 ```
 
-#### More examples
-See the [documentation](./docs/steganography.md) for more detailed examples and advanced usage.
+#### Embedding data in a PDF
+```bash
+nhale-cli embed -i input.pdf -o output.pdf -d "Secret message"
+```
+
+#### Extracting data from a PDF
+```bash
+nhale-cli extract -i output.pdf
+```
 
 ---
 
@@ -111,65 +125,63 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## **6. Project Execution Plan (Kanban Tasks)**
+## **6. Project Status**
 
-### **Phase 1: Core Development**
-- [x] Implement Rust-based LSB embedding and extraction.
-- [x] Implement AES, ChaCha20, and RSA encryption modules.
-- [x] Develop integrity checking and HMAC verification.
-- [ ] Implement metadata manipulation utilities.
-- [x] Implement PNG image processing with LSB steganography and variable bit depth.
-- [ ] Implement JPG, BMP, and GIF image processing.
-- [ ] Implement audio processing utilities (WAV, MP3).
-- [ ] Implement video processing utilities (MP4).
-- [x] Implement PDF embedding and extraction with integrity checking.
+### **Implemented Features**
+- [x] Rust-based LSB embedding and extraction for PNG images.
+- [x] JPG steganography with DCT coefficient modification (partially implemented).
+- [x] PDF embedding and extraction with integrity checking.
+- [x] AES-256, ChaCha20, and RSA encryption modules.
+- [x] Integrity checking and HMAC verification for PDF files.
+- [x] Reed-Solomon error correction (needs better integration with JPEG).
+- [x] Basic CLI commands and argument parsing.
+- [x] Advanced configuration options for steganography techniques.
 
-### **Phase 2: CLI Enhancement**
-- [x] Develop basic CLI commands and argument parsing.
-- [x] Add advanced configuration options for steganography techniques.
-- [ ] Implement batch processing capabilities.
-- [ ] Create user-friendly CLI help and documentation.
-- [ ] Write comprehensive Rust documentation for all CLI commands.
-- [ ] Write automated tests for CLI.
-
-### **Phase 3: Testing & Deployment**
-- [ ] Perform security audits on steganographic algorithms.
-- [ ] Optimize performance and reduce binary size.
-- [ ] Write end-to-end integration tests.
-- [ ] Package and release for various platforms.
+### **In Progress / Planned Features**
+- [ ] Improved JPEG steganography with better error correction integration.
+- [ ] Complete metadata manipulation utilities.
+- [ ] BMP and GIF image processing.
+- [ ] Audio processing utilities (WAV, MP3).
+- [ ] Video processing utilities (MP4).
+- [ ] Watermarking functionality (visible and invisible).
+- [ ] Batch processing capabilities.
+- [ ] Enhanced CLI documentation and help.
+- [ ] Performance optimization and security auditing.
+- [ ] End-to-end integration tests.
+- [ ] Packaging and release for various platforms.
 
 ---
 
-## **7. Code Structure**
+## **7. Current Code Structure**
 ```plaintext
 nHale/
 │── src/
-│   │── main.rs  # CLI entry point
-│   │── lib.rs   # Core library functionality
-│   │── embedding.rs  # Embedding module
-│   │── extraction.rs  # Extraction module
-│   │── encryption.rs  # Encryption (AES, ChaCha20, RSA)
-│   │── integrity.rs  # Integrity checking with HMAC
-│   │── metadata.rs  # Metadata manipulation
-│   │── pdf.rs  # PDF analysis module
-│   │── utils.rs  # Helper functions and utilities
+│   │── lib.rs              # Core library functionality
+│   │── embedding.rs        # Embedding module for PNG, JPG, PDF
+│   │── extraction.rs       # Extraction module for PNG, JPG, PDF
+│   │── encryption.rs       # Encryption (AES, ChaCha20, RSA)
+│   │── error_correction.rs # Error correction for lossy formats
+│   │── integrity.rs        # Integrity checking with HMAC
+│   │── metadata.rs         # Basic metadata handling (WIP)
+│   │── pdf.rs              # PDF steganography
+│   │── utils.rs            # Helper functions and utilities
+│   │── watermarking.rs     # Watermarking module (skeleton)
 │   │── bin/
-│   │   │── cli.rs  # CLI implementation
+│   │   │── cli.rs          # CLI implementation
+│   │   │── create_test_pdf.rs # Utility for creating test PDFs
 │
 │── tests/
-│   │── integration_tests.rs  # Integration testing
-│   │── unit_tests.rs  # Unit tests
-│   │── fixtures/  # Test fixtures
+│   │── fixtures/           # Test fixtures
 │
-│── docs/
-│   │── architecture.md  # Technical documentation
-│   │── api.md  # API documentation
-│   │── usage.md  # User guide
+│── docs/                   # Documentation
 │
-│── .github/
-│   │── workflows/
-│   │   │── ci.yml  # CI/CD pipeline
+│── .github/                # GitHub configuration
 │
-│── Cargo.toml  # Rust dependencies
-│── README.md  # Project overview
-│── LICENSE  # Open-source license
+│── Cargo.toml              # Rust dependencies
+│── README.md               # Project overview
+│── LICENSE                 # MIT license
+```
+
+### **See Also**
+- [ISSUES.md](ISSUES.md) for current issues, bugs, and detailed development priorities.
+- [CHANGELOG.md](CHANGELOG.md) for version history.
