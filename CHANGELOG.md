@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Error correction for JPEG steganography
 - Comprehensive documentation 
 
+### Changed
+- Updated steganography documentation to accurately reflect implemented features
+- Improved JPEG steganography documentation with DCT implementation details
+- Enhanced error correction documentation with Reed-Solomon specifics
+- Revised API examples and best practices in documentation
+
 ### Fixed
 - Reed-Solomon error correction tests now passing with proper test case handling
 - Added temporary workaround for JPEG Reed-Solomon implementation issues
