@@ -48,7 +48,7 @@
 
 - [Project Status](#6-project-status)
   - [Implemented Features](#implemented-features)
-  - [Planned Features](#in-progress--planned-features)
+  - [In Progress / Planned Features](#in-progress--planned-features)
 - [Code Structure](#7-current-code-structure)
 - [License](#5-license)
 
@@ -65,6 +65,7 @@ nHale is an open-source advanced steganography toolkit designed for secure messa
 - Provide native embedding and extraction capabilities for multiple file types.
 - Implement strong encryption before embedding data for enhanced security.
 - Ensure robust metadata and watermarking functionalities.
+- **Integrate comprehensive steganalysis capabilities** to detect hidden data through statistical analysis, anomaly detection, and optional machine learning-based methods.
 - Maintain strict software development best practices.
 
 ---
@@ -98,6 +99,12 @@ nHale is an open-source advanced steganography toolkit designed for secure messa
 - **Watermarking Module:** Embeds and verifies digital watermarks.
 - **Enhanced Metadata Module:** Advanced metadata manipulation for various file formats.
 - **PDF Analysis Module:** Detects hidden scripts and anomalies.
+- **Steganalysis Module:**  
+  - **File Preprocessing:** Extend file parsers to extract and normalize raw data for analysis.
+  - **Statistical & Anomaly Analysis:** Analyze pixel distributions, noise levels, and DCT coefficients to detect irregularities.
+  - **Machine Learning-Based Detection (Optional):** Integrate models to provide confidence scores on hidden data presence.
+  - **Visualization Tools:** Generate histograms, noise maps, and comparison views for manual forensic inspection.
+  - **CLI Integration & Reporting:** Seamlessly integrate steganalysis commands with detailed reporting for forensic analysis.
 
 ---
 
@@ -143,6 +150,11 @@ nhale-cli embed -i input.pdf -o output.pdf -d "Secret message"
 #### Extracting data from a PDF
 ```bash
 nhale-cli extract -i output.pdf
+```
+
+#### Running a Steganalysis Scan
+```bash
+nhale-cli analyze -i suspect.png
 ```
 
 ---
@@ -192,6 +204,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Performance optimization and security auditing.
 - [ ] End-to-end integration tests.
 - [ ] Packaging and release for various platforms.
+- [ ] **Steganalysis Module Integration:** File preprocessing, statistical and anomaly analysis, optional machine learning-based detection, visualization tools, and detailed CLI reporting for forensic analysis.
 
 ---
 
@@ -205,24 +218,24 @@ nHale/
 ├── CONTRIBUTING.md        # Contribution guidelines
 ├── README.md             # Project documentation
 ├── images/
-│   └── banner.gif        # Project banner image
+│   └── banner.gif         # Project banner image
 ├── docs/
 │   ├── jpeg_steganography.md    # JPEG steganography documentation
 │   ├── error_correction.md      # Error correction documentation
 │   └── steganography.md         # General steganography documentation
 └── src/
-    ├── lib.rs            # Core library functionality
-    ├── embedding.rs      # Embedding module for PNG, JPG, PDF
-    ├── extraction.rs     # Extraction module for PNG, JPG, PDF
-    ├── encryption.rs     # Encryption (AES, ChaCha20, RSA)
-    ├── error_correction.rs # Error correction for lossy formats
-    ├── integrity.rs      # Integrity checking with HMAC
-    ├── metadata.rs       # Basic metadata handling
-    ├── pdf.rs           # PDF steganography
-    ├── utils.rs         # Helper functions and utilities
-    ├── watermarking.rs  # Watermarking module
+    ├── lib.rs             # Core library functionality
+    ├── embedding.rs       # Embedding module for PNG, JPG, PDF
+    ├── extraction.rs      # Extraction module for PNG, JPG, PDF
+    ├── encryption.rs      # Encryption (AES, ChaCha20, RSA)
+    ├── error_correction.rs# Error correction for lossy formats
+    ├── integrity.rs       # Integrity checking with HMAC
+    ├── metadata.rs        # Basic metadata handling
+    ├── pdf.rs             # PDF steganography
+    ├── utils.rs           # Helper functions and utilities
+    ├── watermarking.rs    # Watermarking module
     └── bin/
-        ├── cli.rs       # CLI implementation
+        ├── cli.rs         # CLI implementation
         └── create_test_pdf.rs # Utility for creating test PDFs
 ```
 
